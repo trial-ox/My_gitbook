@@ -460,13 +460,25 @@ public void indexList() {
 
 一般情况下，我们不是直接是`new NativeSearchQuery`，而是使用`NativeSearchQueryBuilder`来完成 NativeSearchQuery 的构建。
 
-```
+``` java
 NativeSearchQueryBuilder		
     .withQuery(QueryBuilder1)
     .withFilter(QueryBuilder2)
     .withSort(SortBuilder1)
     .withXXXX()
     .build();
+
+//例子
+SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬", "title", "content"))  //查询词与要匹配的数据库属性
+        .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC)) //根据type排序
+        .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
+        .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+        .withPageable(PageRequest.of(0, 10))  //设置分页
+        .withHighlightFields(
+                new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
+                new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")   //用<em> </em>标签包裹查询词，可以进行css样式渲染。
+        ).build();
 
 
 ```
